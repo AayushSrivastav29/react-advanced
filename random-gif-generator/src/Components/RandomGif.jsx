@@ -1,33 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import useGif from "../Hooks/useGif";
 
 const RandomGif = () => {
-  const apiKey = import.meta.env.VITE_API_KEY;
-  const [gifs, setGifs] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  async function fetchTrendingGifs() {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.get(
-        `https://api.giphy.com/v1/gifs/random?api_key=${apiKey}`
-      );
-
-      console.log(response.data.data);
-      setGifs(response.data.data.images.original.url);
-    } catch (err) {
-      console.error("Error fetching the GIFs:", err);
-      setError("Failed to fetch GIFs. Try again later.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    fetchTrendingGifs();
-  }, []);
+  const { gifs, loading, error, fetchTrendingGifs } = useGif();
 
   return (
     <div className="flex flex-col justify-between bg-green-400 items-center w-1/3 h-1/3">

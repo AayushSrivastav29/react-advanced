@@ -1,24 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-const useGif = () => {
-    
-    const [gifs, setGifs] = useState([]);
+const useGif = (tag) => {
+  const apiKey = import.meta.env.VITE_API_KEY;
+  const [gifs, setGifs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const randomUrl = `https://api.giphy.com/v1/gifs/random?api_key=${apiKey}`;
+  const tagMemeUrl = `https://api.giphy.com/v1/gifs/random?api_key=${apiKey}&tag=${tag}`;
 
   async function fetchTrendingGifs() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(
-        `https://api.giphy.com/v1/gifs/trending?api_key=${apiKey}`
-      );
-      const resArray = response.data.data;
-
-    //  console.log(resArray[0].images.original.url);
-      setGifs(resArray[ Math.floor(Math.random()*resArray.length) ].url);
-
+      const response = await axios.get(tag ? tagMemeUrl : randomUrl);
+      console.log(response.data.data);
+      setGifs(response.data.data.images.original.url);
     } catch (err) {
       console.error("Error fetching the GIFs:", err);
       setError("Failed to fetch GIFs. Try again later.");
@@ -26,9 +24,11 @@ const useGif = () => {
       setLoading(false);
     }
   }
+  useEffect(() => {
+    fetchTrendingGifs();
+  }, []);
 
-
-    return (gifs, error, fetchTrendingGifs);
+  return { gifs, loading, error, fetchTrendingGifs };
 };
 
 export default useGif;
